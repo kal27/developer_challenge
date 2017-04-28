@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">DeveloperChallenge</string>
     <string name="action_settings">Settings</string>
+    <string name="dateFrom">Date From : %1$s</string>
+    <string name="dateTo">Date To : %1$s</string>
+    <string name="from">From…</string>
+    <string name="to">To…</string>
+    <string name="date_to">Date To...</string>
+    <string name="date_from">Date from...</string>
+    <string name="search">Search</string>
+    <string name="title_activity_flight_details">FlightDetailsActivity</string>
 </resources>
