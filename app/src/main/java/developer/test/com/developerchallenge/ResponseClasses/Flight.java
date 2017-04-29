@@ -26,6 +26,7 @@ public class Flight implements Parcelable {
         dateFrom = in.readString();
         dateTo = in.readString();
         currency = in.readString();
+        price = in.readDouble();
     }
 
     @Override
@@ -33,6 +34,7 @@ public class Flight implements Parcelable {
         dest.writeString(dateFrom);
         dest.writeString(dateTo);
         dest.writeString(currency);
+        dest.writeDouble(price);
     }
 
     @Override

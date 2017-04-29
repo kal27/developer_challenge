@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     Button search;
     private List<Flight> flights;
     private final String BASE_URL = "https://murmuring-ocean-10826.herokuapp.com";
+    private String arrivalAirport = "DUB", destinationAirport="BCN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                 .build()
                 .create(ApiClient.class);
 
+        loadFlights();
+
     }
 
     @OnClick(R.id.search)
@@ -73,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
                 Response jsonResponse = response.body();
                 if (jsonResponse != null) {
                     if (jsonResponse.getFlights().size() != 0) {
+                        //only set the values when we're sure the input was valid i.e the response
+                        //sent back is valid
+                        arrivalAirport = fromInput.getText().toString();
+                        destinationAirport = toInput.getText().toString();
                         flights = jsonResponse.getFlights();
+
                         FlightArrayAdapter flightArrayAdapter = new FlightArrayAdapter(MainActivity.this, flights);
                         flightsListView.setAdapter(flightArrayAdapter);
                     } else {
@@ -116,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
         Flight flight = flights.get(position);
         Intent intent = new Intent(MainActivity.this, FlightDetailsActivity.class);
         intent.putExtra("flight", flight);
+        intent.putExtra("arrival", arrivalAirport);
+        intent.putExtra("destination", destinationAirport);
         startActivity(intent);
     }
 

@@ -4,9 +4,12 @@
     <string name="dateFrom">Date From : %1$s</string>
     <string name="dateTo">Date To : %1$s</string>
     <string name="from">From…</string>
+    <string name="arrivalAirport">Arrival airport : %1$s</string>
+    <string name="destinationAirport">Destination airport : %1$s</string>
     <string name="to">To…</string>
-    <string name="date_to">Date To...</string>
-    <string name="date_from">Date from...</string>
+    <string name="date_to">Date To…</string>
+    <string name="date_from">Date from…</string>
     <string name="search">Search</string>
-    <string name="title_activity_flight_details">FlightDetailsActivity</string>
+    <string name="title_activity_flight_details">Flight details</string>
+    <string name="ticket_details">Ticket details</string>
 </resources>
