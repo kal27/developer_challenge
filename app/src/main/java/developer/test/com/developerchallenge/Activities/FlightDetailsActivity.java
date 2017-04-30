@@ -24,7 +24,7 @@ public class FlightDetailsActivity extends AppCompatActivity {
         String arrivalAirport = getIntent().getExtras().getString("arrival");
         String destinationAirport = getIntent().getExtras().getString("destination");
 
-        //one of the requirements was to develop a summary page that would be easily expendable
+        //one of the requirements was to develop a summary page that would be easily extended
         //that is why data binding was used
         //when the rest api changes i.e it will return more data the only things that will have to
         //be modified will be the Flight class and layout

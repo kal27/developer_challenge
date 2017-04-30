@@ -21,6 +21,7 @@ import developer.test.com.developerchallenge.R;
 import developer.test.com.developerchallenge.ResponseClasses.Flight;
 import developer.test.com.developerchallenge.ResponseClasses.Response;
 import developer.test.com.developerchallenge.Utils.ApiClient;
+import developer.test.com.developerchallenge.Utils.ConnectivityUtils;
 import developer.test.com.developerchallenge.Utils.FlightArrayAdapter;
 import developer.test.com.developerchallenge.Utils.ValidationUtils;
 import retrofit2.Call;
@@ -62,22 +63,29 @@ public class MainActivity extends AppCompatActivity {
                 .build()
                 .create(ApiClient.class);
 
+        ConnectivityUtils.checkConnectivityAndDisplayDialog(this);
+
     }
 
     @OnClick(R.id.search)
-    void loadFlights() {
+    void validateInput() {
         String arrCode = arrAirport.getText().toString();
         String destCode = destAirport.getText().toString();
         String dateFrom = dateFromInput.getText().toString();
         String dateTo = dateToInput.getText().toString();
 
-        if (!((ValidationUtils.validateAirportCode(arrCode, this)) && (ValidationUtils.validateAirportCode(arrCode, this)))) {
+        if (!((ValidationUtils.validateAirportCode(arrCode, this)) && (ValidationUtils.validateAirportCode(destCode, this)))) {
             return;
         }
         if (!((ValidationUtils.validateDate(dateFrom, dateFromInput)) && (ValidationUtils.validateDate(dateTo, dateToInput)))) {
             return;
         }
 
+        loadFlights(arrCode, destCode, dateFrom, dateTo);
+    }
+
+
+    private void loadFlights(String arrCode, String destCode, String dateFrom, String dateTo) {
         responseCall = restClient.searchForFlights(arrCode, destCode, dateFrom, dateTo);
         responseCall.enqueue(new Callback<Response>() {
             @Override
