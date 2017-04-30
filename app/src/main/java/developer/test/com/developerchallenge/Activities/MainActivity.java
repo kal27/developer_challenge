@@ -22,6 +22,7 @@ import developer.test.com.developerchallenge.ResponseClasses.Flight;
 import developer.test.com.developerchallenge.ResponseClasses.Response;
 import developer.test.com.developerchallenge.Utils.ApiClient;
 import developer.test.com.developerchallenge.Utils.FlightArrayAdapter;
+import developer.test.com.developerchallenge.Utils.ValidationUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -31,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private ApiClient restClient;
     @BindView(R.id.flightsListView)
     ListView flightsListView;
-    @BindView(R.id.fromInput)
-    EditText fromInput;
-    @BindView(R.id.toInput)
-    EditText toInput;
+    @BindView(R.id.arrAirport)
+    EditText arrAirport;
+    @BindView(R.id.destAirport)
+    EditText destAirport;
     @BindView(R.id.dateFromInput)
     EditText dateFromInput;
     @BindView(R.id.dateToInput)
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
     Button search;
     private List<Flight> flights;
     private final String BASE_URL = "https://murmuring-ocean-10826.herokuapp.com";
-    private String arrivalAirport = "DUB", destinationAirport="BCN";
+    private String arrivalAirport = "DUB", destinationAirport = "BCN";
+    private Call<Response> responseCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,30 +62,37 @@ public class MainActivity extends AppCompatActivity {
                 .build()
                 .create(ApiClient.class);
 
-        loadFlights();
-
     }
 
     @OnClick(R.id.search)
     void loadFlights() {
-        Call<Response> responseCall = restClient.searchForFlights(fromInput.getText().toString(), toInput.getText().toString()
-                , dateFromInput.getText().toString(), dateToInput.getText().toString());
+        String arrCode = arrAirport.getText().toString();
+        String destCode = destAirport.getText().toString();
+        String dateFrom = dateFromInput.getText().toString();
+        String dateTo = dateToInput.getText().toString();
 
+        if (!((ValidationUtils.validateAirportCode(arrCode, this)) && (ValidationUtils.validateAirportCode(arrCode, this)))) {
+            return;
+        }
+        if (!((ValidationUtils.validateDate(dateFrom, dateFromInput)) && (ValidationUtils.validateDate(dateTo, dateToInput)))) {
+            return;
+        }
+
+        responseCall = restClient.searchForFlights(arrCode, destCode, dateFrom, dateTo);
         responseCall.enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-
                 Response jsonResponse = response.body();
                 if (jsonResponse != null) {
                     if (jsonResponse.getFlights().size() != 0) {
                         //only set the values when we're sure the input was valid i.e the response
                         //sent back is valid
-                        arrivalAirport = fromInput.getText().toString();
-                        destinationAirport = toInput.getText().toString();
-                        flights = jsonResponse.getFlights();
+                        arrivalAirport = arrAirport.getText().toString();
+                        destinationAirport = destAirport.getText().toString();
 
-                        FlightArrayAdapter flightArrayAdapter = new FlightArrayAdapter(MainActivity.this, flights);
-                        flightsListView.setAdapter(flightArrayAdapter);
+                        flights = jsonResponse.getFlights();
+                        setAdapter(flights);
+
                     } else {
                         Toast.makeText(MainActivity.this, "No results for your search. Please try again.", Toast.LENGTH_SHORT).show();
                     }
@@ -95,6 +104,12 @@ public class MainActivity extends AppCompatActivity {
                 call.cancel();
             }
         });
+    }
+
+
+    private void setAdapter(List<Flight> flights) {
+        FlightArrayAdapter flightArrayAdapter = new FlightArrayAdapter(MainActivity.this, flights);
+        flightsListView.setAdapter(flightArrayAdapter);
     }
 
     @Override
@@ -129,5 +144,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (responseCall != null) {
+            responseCall.cancel();
+        }
+    }
 }
